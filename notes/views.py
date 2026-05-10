@@ -4,8 +4,10 @@ from .models import Note
 
 # Create your views here.
 def note_list_view(request):
-    notes = Note.objects.filter(author=request.user).order_by('-created_at')
-    return render(request, 'note-list.html', context={'notes': notes, 'user': request.user})
+    if request.user.is_authenticated:
+        notes = Note.objects.filter(author=request.user).order_by('-created_at')
+        return render(request, 'note-list.html', context={'notes': notes, 'user': request.user})
+    return render(request, 'note-list.html')
 
 def note_detail_view(request, pk):
     md = markdown.Markdown(extensions=['fenced_code'])

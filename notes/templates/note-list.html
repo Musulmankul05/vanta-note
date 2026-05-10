@@ -11,14 +11,36 @@
 <body class="bg-black text-zinc-400 font-mono antialiased h-screen flex overflow-hidden">
 
     <!-- Sidebar / Notes Menu -->
-    <aside class="w-72 bg-[#17171b] border-r border-zinc-900 flex flex-col h-full shadow-2xl">
+    <aside id="sidebar" class="w-72 min-w-[250px] max-w-[600px] bg-[#17171b] border-r border-zinc-900 flex flex-col h-full shrink-0 relative">
 
         <!-- Header -->
-        <div class="p-6 pb-4">
+        <div class="flex justify-between items-center p-6 pb-4">
             <h1 class="text-lg font-bold text-white tracking-widest uppercase flex items-center gap-3">
                 <span class="w-2 h-2 bg-red-700 rounded-full animate-pulse shadow-[0_0_10px_rgba(185,28,28,0.5)]"></span>
-                Vault
+                {% if user.is_authenticated %} {{ user.username }} {% else %} Websidian {% endif %}
             </h1>
+            {% if user.is_authenticated %}
+            	<a href="{% url 'logout' %}"><!-- Иконка Logout -->
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="20"
+                        height="20"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.5"
+                        stroke-linecap="square"
+                        stroke-linejoin="miter"
+                        class="transition-transform group-hover:translate-x-1"
+                    >
+                        <!-- Рамка (дверь) -->
+                        <path d="M10 21H5V3H10" class="text-zinc-600 group-hover:text-zinc-300 transition-colors"></path>
+
+                        <!-- Стрелка выхода -->
+                        <line x1="9" y1="12" x2="21" y2="12" class="text-zinc-600 group-hover:text-red-600 transition-colors"></line>
+                        <polyline points="16 7 21 12 16 17" class="text-zinc-600 group-hover:text-red-600 transition-colors"></polyline>
+                    </svg></a>
+            {% endif %}
         </div>
 
         <!-- Search -->
@@ -30,10 +52,8 @@
 
         <!-- Notes List -->
         <div class="flex-1 overflow-y-auto px-3 space-y-1 mt-4 scrollbar-hide">
-
-            <!-- Active Note -->
+        {% if user.is_authenticated %}
             {% for note in notes %}
-            	<!-- Пример одной кнопки -->
                 <button
                     id="note-{{ note.id }}"
                     hx-get="{% url 'note-detail' note.pk %}"
@@ -51,18 +71,70 @@
                     class="note-btn w-full text-left p-3 border-l-2 border-transparent text-zinc-400 transition-all group">
 
                     <div class="text-sm font-semibold truncate">{{ note.title }}</div>
-                    <div class="text-xs text-zinc-600 truncate group-hover:text-zinc-500">{{ note.created_at }}</div>
+                    <div class="text-xs text-zinc-600 truncate group-hover:text-zinc-500">{{ note.created_at|date:"d.m.Y H:i" }}</div>
                 </button>
             {% endfor %}
+        {% else %}
+        	<button onclick="location.href='{% url 'login' %}'" class="w-full text-left p-3 border-l-2
+        	border-lime-800 text-zinc-400 transition-all group">
+
+                <div class="text-sm font-semibold truncate">Login</div>
+                <div class="text-xs text-zinc-600 truncate group-hover:text-zinc-500">If you have your account</div>
+            </button>
+        	<button onclick="location.href='#'" class="w-full text-left p-3 border-l-2
+        	border-lime-800 text-zinc-400 transition-all group">
+
+                <div class="text-sm font-semibold truncate">Sign up</div>
+                <div class="text-xs text-zinc-600 truncate group-hover:text-zinc-500">If you don't have your account</div>
+            </button>
+            <button
+                    hx-get="{% static 'note1.html' %}"
+                    hx-target="#note-content-area"
+                    hx-on:click="
+                        /* 1. Убираем активные стили у всех кнопок */
+                        document.querySelectorAll('.note-btn').forEach(el => {
+                            el.classList.remove('bg-zinc-900/80', 'border-red-700', 'text-white');
+                            el.classList.add('border-transparent', 'text-zinc-400');
+                        });
+                        /* 2. Добавляем активные стили этой кнопке */
+                        this.classList.add('bg-zinc-900/80', 'border-red-700', 'text-white');
+                        this.classList.remove('border-transparent', 'text-zinc-400');
+                    "
+                    class="note-btn w-full text-left p-3 border-l-2 border-transparent text-zinc-400 transition-all group">
+
+                    <div class="text-sm font-semibold truncate">What is Websidian</div>
+                    <div class="text-xs text-zinc-600 truncate group-hover:text-zinc-500">Introduction</div>
+                </button>
+        	<button
+                hx-get="{% static 'note2.html' %}"
+                hx-target="#note-content-area"
+                hx-on:click="
+                    /* 1. Убираем активные стили у всех кнопок */
+                    document.querySelectorAll('.note-btn').forEach(el => {
+                        el.classList.remove('bg-zinc-900/80', 'border-red-700', 'text-white');
+                        el.classList.add('border-transparent', 'text-zinc-400');
+                    });
+                    /* 2. Добавляем активные стили этой кнопке */
+                    this.classList.add('bg-zinc-900/80', 'border-red-700', 'text-white');
+                    this.classList.remove('border-transparent', 'text-zinc-400');
+                "
+                class="note-btn w-full text-left p-3 border-l-2 border-transparent text-zinc-400 transition-all group">
+
+                <div class="text-sm font-semibold truncate">Features</div>
+                <div class="text-xs text-zinc-600 truncate group-hover:text-zinc-500">Introduction</div>
+            </button>
+        {% endif %}
 
         </div>
 
         <!-- Footer -->
         <div class="p-5 border-t border-zinc-900/50 mt-auto flex items-center justify-between">
-            <div class="text-[10px] text-zinc-600 uppercase tracking-widest font-semibold">User: {{ user.username }}</div>
+            <a href="https://github.com/Musulmankul05" class="text-[10px]
+            text-zinc-600 uppercase tracking-widest font-semibold hover:text-zinc-400">GITHUB: Musulmankul05
+            </a>
             <div class="text-[10px] text-zinc-600 uppercase tracking-widest">v1.0</div>
         </div>
-
+        <div id="resizer" class="absolute top-0 right-0 w-1.5 h-full cursor-col-resize hover:bg-red-900/50 transition-colors z-10"></div>
     </aside>
 
     <!-- Main Content Area -->
@@ -71,4 +143,30 @@
     </main>
 
 </body>
+<script>
+    const sidebar = document.getElementById('sidebar');
+    const resizer = document.getElementById('resizer');
+    let isResizing = false;
+
+    // Зажали мышь на границе
+    resizer.addEventListener('mousedown', (e) => {
+        isResizing = true;
+        document.body.style.cursor = 'col-resize'; // Курсор на всем экране
+        document.body.style.userSelect = 'none';   // Текст не выделяется при перетаскивании
+    });
+
+    // Тянем мышь
+    document.addEventListener('mousemove', (e) => {
+        if (!isResizing) return;
+        // Координата мыши X = новая ширина сайдбара
+        sidebar.style.width = `${e.clientX}px`;
+    });
+
+    // Отпустили мышь
+    document.addEventListener('mouseup', () => {
+        isResizing = false;
+        document.body.style.cursor = 'default';
+        document.body.style.userSelect = 'auto';
+    });
+</script>
 </html>

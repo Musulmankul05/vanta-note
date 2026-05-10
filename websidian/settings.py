@@ -125,5 +125,12 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = 'static/'
+STATICFILES_DIRS = [
+    BASE_DIR / 'static',
+]
 
 AUTH_USER_MODEL = 'users.User'
+
+LOGIN_REDIRECT_URL = 'note-menu' # or a named URL pattern, e.g., 'accounts:profile'
+LOGOUT_REDIRECT_URL = 'login' # Optional: URL to redirect to after logout
+LOGIN_URL = 'login' # The URL name for your login page
