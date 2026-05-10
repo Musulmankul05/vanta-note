@@ -12,7 +12,7 @@ def note_list_view(request):
 def note_detail_view(request, pk):
     md = markdown.Markdown(extensions=['fenced_code'])
     note = get_object_or_404(Note, pk=pk)
-    note.content = md.convert(note.content)
+    note.content = md.convert(note.decrypt_note(master_key=request.session['master_key']))
 
 
     if request.headers.get("HX-Request"):
