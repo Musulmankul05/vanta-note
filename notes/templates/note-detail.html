@@ -1,17 +1,21 @@
 <!-- Это прилетит внутрь <main> -->
 <div class="my-30 mx-50 font-sans max-w-2xl w-full animate-fade-in">
     <header class="mb-10 border-b border-zinc-900 pb-6">
-        <h1 class="text-3xl font-bold text-white tracking-tight">{{ note.title }}</h1>
+        <h1 class="text-3xl font-bold text-zinc-500 tracking-tight">{{ note.title }}</h1>
         <div class="flex gap-4 mt-4 text-[10px] uppercase tracking-widest text-zinc-600">
             <span>Created: {{ note.created_at|date:"d.m.y" }}</span>
             <span class="text-red-900">//</span>
             <span>Status: Encrypted</span>
+            <span class="text-red-900">//</span>
+            <a href="{% url 'note-edit' note.pk %}" class="text-zinc-600 hover:text-red-600 transition-colors">
+    [ EDIT_DATA ]
+</a>
         </div>
     </header>
-
+    
     <div class="prose prose-invert prose-zinc max-w-none">
         <p class="text-zinc-300 leading-relaxed text-md">
-            {{ note.content|safe|linebreaks }}
+            {{ note.content|safe }}
         </p>
     </div>
     <p class="mt-70">&emsp13;</p>

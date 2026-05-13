@@ -4,7 +4,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Websidian</title>
+    <title>Vanta</title>
     <script src="https://unpkg.com/htmx.org@1.9.12"></script>
     {% tailwind_css %}
 </head>
@@ -17,37 +17,51 @@
         <div class="flex justify-between items-center p-6 pb-4">
             <h1 class="text-lg font-bold text-white tracking-widest uppercase flex items-center gap-3">
                 <span class="w-2 h-2 bg-red-700 rounded-full animate-pulse shadow-[0_0_10px_rgba(185,28,28,0.5)]"></span>
-                {% if user.is_authenticated %} {{ user.username }} {% else %} Websidian {% endif %}
+                {% if user.is_authenticated %} {{ user.username }} {% else %} Vanta {% endif %}
             </h1>
             {% if user.is_authenticated %}
-            	<a href="{% url 'logout' %}"><!-- Иконка Logout -->
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="20"
-                        height="20"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="1.5"
-                        stroke-linecap="square"
-                        stroke-linejoin="miter"
-                        class="transition-transform group-hover:translate-x-1"
-                    >
-                        <!-- Рамка (дверь) -->
-                        <path d="M10 21H5V3H10" class="text-zinc-600 group-hover:text-zinc-300 transition-colors"></path>
+            	
+            <!-- Контейнер должен быть relative, чтобы меню (absolute) позиционировалось относительно него -->
+<div class="dropdown relative inline-block">
+    
+    <!-- Передаем event в функцию, объединил классы -->
+    <button onclick="toggleDropdown(event)" class="dropbtn hover:bg-zinc-800 p-2 transition-colors rounded-md text-zinc-700">
+        <svg width="24px" height="24px" viewBox="0 0 12 12" enable-background="new 0 0 12 12" version="1.1" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+            <rect fill="currentColor" height="1.5" width="11" x="0.5" y="5.5"/>
+            <rect fill="currentColor" height="1.5" width="11" x="0.5" y="1.8"/>
+            <rect fill="currentColor" height="1.5" width="11" x="0.5" y="9.2"/>
+        </svg>
+    </button>
 
-                        <!-- Стрелка выхода -->
-                        <line x1="9" y1="12" x2="21" y2="12" class="text-zinc-600 group-hover:text-red-600 transition-colors"></line>
-                        <polyline points="16 7 21 12 16 17" class="text-zinc-600 group-hover:text-red-600 transition-colors"></polyline>
-                    </svg></a>
+    <!-- По умолчанию hidden. Заменил fixed на absolute right-0 (открывается вправо-вниз). Добавил gap и стили ссылкам -->
+    <div id="myDropdown" class="dropdown-content hidden absolute right-0 bg-[#1e1e22] px-6 py-3 mt-1.5 flex-col rounded-md shadow-xl border border-zinc-800/50 min-w-[150px] gap-3 z-50">
+        <a href="#" class="text-sm text-zinc-400 hover:text-white transition-colors">Profile</a>
+        <a href="#" class="text-sm text-zinc-400 hover:text-white transition-colors">Settings</a>
+        <div class="w-full h-px bg-zinc-800 my-1"></div>
+        <a href="{% url 'logout' %}" class="text-sm text-red-900/80 hover:text-red-500 transition-colors uppercase tracking-widest font-bold">Logout</a>
+    </div>
+
+</div>
             {% endif %}
         </div>
 
         <!-- Search -->
-        <div class="px-4 py-2">
-            <input type="text" placeholder="Search..."
-                class="w-full bg-zinc-900/40 text-zinc-200 text-xs placeholder-zinc-700 rounded-none py-2.5 px-3
-                focus:outline-none focus:ring-1 focus:ring-red-900/50 border border-zinc-800/50 transition-colors">
+        <div class="px-4 py-2 flex items-center gap-2">
+    <!-- Поле поиска теперь забирает всё свободное место (flex-grow) -->
+            <div class="relative grow">
+                <input type="text" placeholder="Search_Archives..."
+                    class="w-full bg-zinc-900/40 text-zinc-200 text-xs placeholder-zinc-700 rounded-none py-2.5 px-3
+                    focus:outline-none focus:ring-1 focus:ring-red-900/50 border border-zinc-800/50 transition-colors font-mono">
+            </div>
+
+            <!-- Кнопка добавления -->
+            <a href="{% url 'note-create' %}" 
+            class="bg-zinc-900/40 border border-zinc-800/50 p-2.5 hover:border-red-900/50 hover:bg-red-950/10 transition-all group"
+            title="New Entry">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-zinc-600 group-hover:text-red-600 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                </svg>
+            </a>
         </div>
 
         <!-- Notes List -->
@@ -130,7 +144,7 @@
         <!-- Footer -->
         <div class="p-5 border-t border-zinc-900/50 mt-auto flex items-center justify-between">
             <a href="https://github.com/Musulmankul05" class="text-[10px]
-            text-zinc-600 uppercase tracking-widest font-semibold hover:text-zinc-400">GITHUB: Musulmankul05
+            text-zinc-600 uppercase tracking-widest font-semibold hover:text-zinc-400">VANTA
             </a>
             <div class="text-[10px] text-zinc-600 uppercase tracking-widest">v1.0</div>
         </div>
@@ -167,6 +181,35 @@
         isResizing = false;
         document.body.style.cursor = 'default';
         document.body.style.userSelect = 'auto';
+    });
+
+    function toggleDropdown(event) {
+        // Останавливаем всплытие клика, чтобы сразу не сработал window.addEventListener
+        event.stopPropagation(); 
+        
+        const dropdown = document.getElementById("myDropdown");
+        
+        // В Tailwind мы переключаем классы hidden и flex
+        if (dropdown.classList.contains('hidden')) {
+            dropdown.classList.remove('hidden');
+            dropdown.classList.add('flex'); // Включаем flex, так как у тебя flex-col
+        } else {
+            dropdown.classList.add('hidden');
+            dropdown.classList.remove('flex');
+        }
+    }
+
+    // Закрываем меню, если кликнули в любое другое место на экране
+    window.addEventListener('click', function(event) {
+        const dropdown = document.getElementById("myDropdown");
+        
+        // Если клик был НЕ по меню и НЕ по кнопке открытия
+        if (!event.target.closest('.dropdown-content') && !event.target.closest('.dropbtn')) {
+            if (!dropdown.classList.contains('hidden')) {
+                dropdown.classList.add('hidden');
+                dropdown.classList.remove('flex');
+            }
+        }
     });
 </script>
 </html>

@@ -45,8 +45,10 @@ INSTALLED_APPS = [
     'users',
 ]
 
+
+TAILWIND_USE_STANDALONE_BINARY = False
 TAILWIND_APP_NAME = 'theme'
-NPM_BIN_PATH = "/home/musulmankul/.nvm/versions/node/v26.1.0/bin/node"
+NPM_BIN_PATH = "/home/musulmankul/.nvm/versions/node/v26.1.0/bin/npm"
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -57,6 +59,12 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+if DEBUG:
+    INSTALLED_APPS += ["django_browser_reload"]
+    MIDDLEWARE += [
+        "django_browser_reload.middleware.BrowserReloadMiddleware",]
+    
 
 ROOT_URLCONF = 'websidian.urls'
 

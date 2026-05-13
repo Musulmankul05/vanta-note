@@ -6,6 +6,7 @@ from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
 from django.views import View
 
+from notes.models import Note
 from websidian.security import get_fernet_key
 
 from users.models import User
@@ -22,17 +23,18 @@ class LoginUserView(LoginView):
     success_url = "note-menu"
 
     def post(self, request, *args, **kwargs):
-        email_or_phone = request.POST.get('email')
+        username = request.POST.get('username')
         password = request.POST.get('password')
         try:
-            user = User.objects.get(email=email_or_phone)
-            key = get_fernet_key(password, user.salt)
+            user = User.objects.get(username=username)
             request.POST = request.POST.copy()
             request.POST['username'] = user.username
             request.POST['password'] = password
-            request.session['master_key'] = key.decode()
-        except User.DoesNotExist:
+            print(f"{request.POST['username']}\n{request.POST['password']}")
+        except User.DoesNotExist as e:
+            print(e)
             pass
+
         return super().post(request, *args, **kwargs)
 
 
@@ -46,17 +48,27 @@ class SignupView(View):
 
     def post(self, request):
         username = request.POST.get("username")
+        email = request.POST.get("email")
+        password = request.POST.get("password1")
+        password_confirm = request.POST.get("password2")
 
+        if password != password_confirm:
+            return render(request, self.template_name, {"error": "Security keys do not match."})
+        
         existing_user = User.objects.filter(username=username).first()
         if existing_user:
             if existing_user.is_active:
-                return render(request, self.template_name, {"error": "Пользователь с таким именем уже существует."})
+                return render(request, self.template_name, {"error": "Identifier is already in use."})
             else:
                 existing_user.delete()
+        
+        user = User.objects.create_user(
+            username = username, email = email, password = password
+        )
 
-        user = User(username=request.POST.get("username"),
-                    email=request.POST.get("email"),
-                    password = request.POST.get("password1"),
-                    salt = os.urandom(16))
+        user.salt = os.urandom(16)
         user.save()
+        welcome_note = Note.objects.create(author = user, title = "Welcome to Websidian", 
+                                           content = "**Welcome my friend to Websidian.**\n# You can add notes and write with Markdown expressions.\n *Enjoy!*")
+        welcome_note.save()
         return redirect('login')

@@ -1,0 +1,26 @@
+.note-content h1 {
+    color: white;
+    font-size: 36px;
+    font-weight: 700;
+    margin-bottom: 16px; 
+}
+.note-content h2 {
+    color: white;
+    font-size: 24px;
+    font-weight: 500;
+    margin-bottom: 8px; 
+}
+.note-content h3 {
+    color: white;
+    font-size: 20px;
+    font-weight: 500;
+    margin-bottom: 7px; 
+}
+.note-content ul {
+    list-style-type: disc;
+    list-style-position: inside;
+    margin-bottom: 16px;
+}
+.note-content li {
+    margin-bottom: 4px;
+}
