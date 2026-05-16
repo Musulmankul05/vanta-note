@@ -1,5 +1,6 @@
 from datetime import timedelta
 from django.utils import timezone
+from django.http import Http404
 import markdown
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import Note
@@ -42,6 +43,14 @@ def note_detail_view(request, pk):
 
     return render(request, 'note-list.html', context={'note': note})
 
+def note_burning_view(request, pk):
+    note = get_object_or_404(Note, pk=pk)
+
+    if not note.is_burn_after_reading:
+        raise Http404
+    return render(request, 'note-burning.html', context={'note': note})
+
+
 @login_required
 def note_create_view(request):
     if request.method == 'POST':
@@ -57,14 +66,20 @@ def note_create_view(request):
             case '7d':
                 note.expires_at = timezone.now() + timedelta(days=7)
 
+        note = Note(title=title, content=content, author=request.user)
         note.is_burn_after_reading = 'burn_after_reading' in request.POST
         master_key = request.session.get('master_key')
 
-        note = Note(title=title, content=content, author=request.user)
         note.save(master_key=master_key)
 
         return redirect('note-menu')
     return render(request, 'note-create.html')
+
+@login_required
+def note_delete_view(request, pk):
+    note = get_object_or_404(Note, pk=pk)
+    note.delete()
+    return redirect('note-menu')
 
 
 @login_required

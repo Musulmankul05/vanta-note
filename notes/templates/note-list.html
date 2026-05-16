@@ -4,7 +4,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Vanta</title>
+    <title>vanta.</title>
     <script src="https://unpkg.com/htmx.org@1.9.12"></script>
     {% tailwind_css %}
 </head>
@@ -68,6 +68,11 @@
         <div class="flex-1 overflow-y-auto px-3 space-y-1 mt-4 scrollbar-hide">
         {% if user.is_authenticated %}
             {% for note in notes %}
+                {% if note.is_burn_after_reading %}
+                <button onclick="location.href='{% url 'note-burning' note.pk %}'" class="note-btn w-full text-left p-3 border-l-3 border-purple-600 text-zinc-400 transition-all group">
+                    <div class="text-sm font-semibold truncate">{{ note.title }}</div>
+                    <div class="text-xs text-zinc-600 truncate group-hover:text-zinc-500">{{ note.created_at|date:"d.m.Y H:i" }}</div></button>
+                {% else %}
                 <button
                     id="note-{{ note.id }}"
                     hx-get="{% url 'note-detail' note.pk %}"
@@ -87,6 +92,7 @@
                     <div class="text-sm font-semibold truncate">{{ note.title }}</div>
                     <div class="text-xs text-zinc-600 truncate group-hover:text-zinc-500">{{ note.created_at|date:"d.m.Y H:i" }}</div>
                 </button>
+                {% endif %}
             {% endfor %}
         {% else %}
         	<button onclick="location.href='{% url 'login' %}'" class="w-full text-left p-3 border-l-2
