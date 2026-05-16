@@ -1,4 +1,4 @@
-# Obsidian-like online note-taking app with Markdown support by Django
+# Online note-taking app experience with Markdown support by Django
 
 ## Stacks:
 * Django
