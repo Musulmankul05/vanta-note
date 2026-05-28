@@ -10,30 +10,21 @@
     <div class="my-20 mx-50 font-sans max-w-2xl w-full animate-fade-in">
     <button class="mb-6 p-2 hover:text-zinc-300 text-zinc-700 font-black" onclick="history.back()"><</button>
     <header class="mb-10 border-b border-zinc-900 pb-6">
-        <h1 class="text-3xl font-bold text-zinc-500 tracking-tight">{{ note.title }}</h1>
+        <h1 class="text-3xl font-bold text-zinc-500 tracking-tight">{{ title }}</h1>
         <div class="flex gap-4 mt-4 text-[10px] uppercase tracking-widest text-zinc-600">
-            <span>Created: {{ note.created_at|date:"d.m.y" }}</span>
+            <span>Created: {{ created_date|date:"d.m.y" }}</span>
             <span class="text-red-900">//</span>
             <span>BURNING_ENTRY</span>
             <span class="text-red-900">//</span>
-            <button class="text-zinc-600 hover:text-red-600 transition-colors" 
-            onclick="location.href='{% url 'note-delete' note.pk %}'">[ DELETE_ENTRY ]</button>
         </div>
     </header>
     
     <div class="prose prose-invert prose-zinc max-w-none">
         <p class="text-zinc-300 leading-relaxed text-md">
-            {{ note.content|safe }}
+            {{ content|safe }}
         </p>
     </div>
     <p class="mt-70">&emsp13;</p>
 </div>
 </body>
-<script>
-    // Fired when the user closes the tab, navigates away, or reloads
-    window.addEventListener('beforeunload', function (e) {
-        // Send a synchronous or fetch request to your delete endpoint
-        navigator.sendBeacon("{% url 'note-delete' note.pk %}");
-    });
-</script>
 </html>

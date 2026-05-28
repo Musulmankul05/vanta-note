@@ -7,7 +7,6 @@ from django.urls import reverse_lazy
 from django.views import View
 
 from notes.models import Note
-from websidian.security import get_fernet_key
 
 from users.models import User
 
@@ -68,7 +67,8 @@ class SignupView(View):
 
         user.salt = os.urandom(16)
         user.save()
-        welcome_note = Note.objects.create(author = user, title = "Welcome to Websidian", 
-                                           content = "**Welcome my friend to Websidian.**\n# You can add notes and write with Markdown expressions.\n *Enjoy!*")
+        welcome_note = Note.objects.create(author = user, title = "welcome to vanta",
+                                           content = "**welcome my friend to vanta.**\n"
+                                                     "# you can add notes and write with markdown expressions.\n *enjoy!*")
         welcome_note.save()
         return redirect('login')

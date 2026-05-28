@@ -48,7 +48,12 @@ def note_burning_view(request, pk):
 
     if not note.is_burn_after_reading:
         raise Http404
-    return render(request, 'note-burning.html', context={'note': note})
+    title = note.title
+    md = markdown.Markdown(extensions=['fenced_code', 'tables', 'sane_lists'])
+    content = md.convert(note.content)
+    created_date = note.created_at
+    note.delete()
+    return render(request, 'note-burning.html', context={'title': title, 'content': content, 'created_date': created_date})
 
 
 @login_required
@@ -58,6 +63,7 @@ def note_create_view(request):
         content = request.POST.get('content')
         lifetime = request.POST.get('lifetime')
 
+        note = Note(title=title, content=content, author=request.user)
         match lifetime:
             case '1h':
                 note.expires_at = timezone.now() + timedelta(hours=1)
@@ -66,7 +72,6 @@ def note_create_view(request):
             case '7d':
                 note.expires_at = timezone.now() + timedelta(days=7)
 
-        note = Note(title=title, content=content, author=request.user)
         note.is_burn_after_reading = 'burn_after_reading' in request.POST
         master_key = request.session.get('master_key')
 
