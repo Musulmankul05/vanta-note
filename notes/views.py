@@ -1,10 +1,10 @@
-from datetime import timedelta
+from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 from django.http import Http404
-import markdown
-from django.shortcuts import render, get_object_or_404, redirect
+from datetime import timedelta
 from .models import Note
-from django.contrib.auth.decorators import login_required
+import markdown
 
 # Create your views here.
 def note_list_view(request):
@@ -103,3 +103,6 @@ def note_edit_view(request, pk):
         'note': note,
         'is_edit': True
     })
+
+
+# API ----------------
