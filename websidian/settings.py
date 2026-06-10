@@ -143,3 +143,8 @@ AUTH_USER_MODEL = 'users.User'
 LOGIN_REDIRECT_URL = 'note-menu' # or a named URL pattern, e.g., 'accounts:profile'
 LOGOUT_REDIRECT_URL = 'login' # Optional: URL to redirect to after logout
 LOGIN_URL = 'login' # The URL name for your login page
+
+REST_FRAMEWORK = {
+    'DATETIME_FORMAT': '%d.%m.%Y %H:%M:%S',
+    'DATETIME_INPUT_FORMATS': ['&d.&m.&Y %H:%M:%S', 'iso-8601']
+}
