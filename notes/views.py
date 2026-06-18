@@ -1,8 +1,13 @@
+from datetime import timedelta
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.generics import ListCreateAPIView
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 from django.http import Http404
-from datetime import timedelta
+from .serializers import NoteSerializer
 from .models import Note
 import markdown
 
@@ -106,3 +111,13 @@ def note_edit_view(request, pk):
 
 
 # API ----------------
+
+class NoteListCreateView(ListCreateAPIView):
+    serializer_class = NoteSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Note.objects.filter(author=self.request.user).order_by('-created_at')
+
+    def perform_create(self, serializer):
+        serializer.save(author=self.request.user)

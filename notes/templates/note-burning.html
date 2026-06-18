@@ -8,9 +8,11 @@
 </head>
 <body class="bg-[#0d0b0b] text-zinc-400 font-mono antialiased min-h-screen flex flex-col items-center p-8">
     <div class="my-20 mx-50 font-sans max-w-2xl w-full animate-fade-in">
-    <button class="mb-6 p-2 hover:text-zinc-300 text-zinc-700 font-black" onclick="history.back()"><</button>
     <header class="mb-10 border-b border-zinc-900 pb-6">
-        <h1 class="text-3xl font-bold text-zinc-500 tracking-tight">{{ title }}</h1>
+        <div class="flex">
+            <button class="p-3 hover:text-zinc-300 text-zinc-700 font-black" onclick="location.href='{% url 'note-menu' %}'"><</button>
+            <h1 class="text-3xl font-bold text-zinc-500 tracking-tight">{{ title }}</h1>
+        </div>
         <div class="flex gap-4 mt-4 text-[10px] uppercase tracking-widest text-zinc-600">
             <span>Created: {{ created_date|date:"d.m.y" }}</span>
             <span class="text-red-900">//</span>
