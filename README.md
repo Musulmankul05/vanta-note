@@ -1,4 +1,4 @@
-# Online note-taking app experience with Markdown support by Django
+# Online note-taking app experience with Markdown support on Django
 
 ## Stacks:
 * Django
